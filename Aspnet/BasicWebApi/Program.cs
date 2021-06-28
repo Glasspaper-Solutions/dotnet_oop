@@ -13,16 +13,14 @@ namespace BasicWebApi
     {
         public static void Main(string[] args)
         {
-            // Starter en web server
-            // lytter på port 80
-            // bruker configurert settings til å svare på http requests
-            Host
-            .CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(
-                webBuilder =>
-                webBuilder.UseStartup<Startup>())
-            .Build()
-            .Run();
+            CreateHostBuilder(args).Build().Run();
         }
-    }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+        }
 }

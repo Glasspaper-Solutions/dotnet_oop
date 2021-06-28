@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
+using System.Text.RegularExpressions;
 
 namespace BasicWebApi
 {
@@ -39,7 +40,16 @@ namespace BasicWebApi
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Person payload)
         {
-            // add an object to the data base here
+            
+            if(payload.Age == null || payload.Age == 0)
+            {
+                return BadRequest("Cannot create person when property 'age' is null or 0..");
+            }
+            if(string.IsNullOrEmpty(payload.Name))
+            {
+                return BadRequest("Cannot create person when property 'name' is null or empty");
+            }
+            
             Console.WriteLine($"Saving {payload.Name} to the database..");
         
             var createdPerson = _service.CreateNewPerson(payload);
@@ -55,14 +65,22 @@ namespace BasicWebApi
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Person payload)
         {
-            // add an object to the data base here
+            if(payload.Age == null || payload.Age == 0)
+            {
+                return BadRequest("Cannot update person when property 'age' is null or 0..");
+            }
+            if(string.IsNullOrEmpty(payload.Name))
+            {
+                return BadRequest("Cannot update person when property 'name' is null or empty");
+            }
+
             Console.WriteLine($"Updating {payload.Name} in the database..");
 
             var updatedPerson = _service.UpdatePerson(payload);
 
             if(updatedPerson == null)
             {
-                return BadRequest("Person can not be updated, because it does not exist in the database");
+                return NotFound("Person can not be updated, because it does not exist in the database");
             }
             return Ok(updatedPerson);
         }
@@ -76,7 +94,7 @@ namespace BasicWebApi
             
             if(deletedPerson == null)
             {
-                return BadRequest("Person can not be deleted, because it does not exist in the database");
+                return NotFound("Person can not be deleted, because it does not exist in the database");
             }
 
             return Ok("Deleted");
