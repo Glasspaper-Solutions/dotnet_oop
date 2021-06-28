@@ -5,15 +5,16 @@ using FluentAssertions;
 using BasicWebApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using AspNetCore.Http.Extensions;
+using System;
 
 namespace BasicWebApi.Test.TestServer
 {
-    public class PostTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class PostTests 
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public PostTests(WebApplicationFactory<Startup> factory)
+        public PostTests()
         {
-            _factory = factory;
+            _factory = new WebApplicationFactory<Startup>();
         }
 
         [Fact]
@@ -23,7 +24,7 @@ namespace BasicWebApi.Test.TestServer
             var client = _factory.CreateClient();
             var body = new Person
             {
-                Name = "Per",
+                Name = "Kari",
                 Age = 22
             };
 
@@ -41,7 +42,7 @@ namespace BasicWebApi.Test.TestServer
             var client = _factory.CreateClient();
             var body = new Person
             {
-                Name = "Per",
+                Name = "Kent",
             };
 
             // act

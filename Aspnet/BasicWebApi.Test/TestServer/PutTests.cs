@@ -2,18 +2,17 @@ using Xunit;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using BasicWebApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using AspNetCore.Http.Extensions;
 
 namespace BasicWebApi.Test.TestServer
 {
-    public class PutTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class PutTests
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public PutTests(WebApplicationFactory<Startup> factory)
+        public PutTests()
         {
-            _factory = factory;
+            _factory = new WebApplicationFactory<Startup>();
         }
 
         [Fact]
@@ -23,7 +22,7 @@ namespace BasicWebApi.Test.TestServer
             var client = _factory.CreateClient();
             var body = new Person
             {
-                Name = "Per",
+                Name = "Marit",
                 Age = 22
             };
             await client.PostAsJsonAsync("api/person",body);
@@ -43,7 +42,7 @@ namespace BasicWebApi.Test.TestServer
             var client = _factory.CreateClient();
             var body = new Person
             {
-                Name = "Bjarne",
+                Name = "Arnt",
                 Age = 22
             };
 
@@ -61,7 +60,7 @@ namespace BasicWebApi.Test.TestServer
             var client = _factory.CreateClient();
             var body = new Person
             {
-                Name = "Per",
+                Name = "Franz",
             };
 
             // act

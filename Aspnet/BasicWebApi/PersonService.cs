@@ -1,77 +1,125 @@
 using System.Linq;
 using System.Collections.Generic;
+using BasicWebApi.Data;
+using System.Threading.Tasks;
+using BasicWebApi.Common;
 
 namespace BasicWebApi
 {
     public class PersonService
     {
+        private readonly PersonDbContext _db;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        private readonly List<Person> _people = new List<Person>();
-
-        public Person GetByName(string name)
+        public PersonService(PersonDbContext dbContext, IDateTimeProvider dateTimeProvider)
         {
-            return _people
-            .Where(x => x.Name.ToLower() == name.ToLower())
-            .FirstOrDefault();
+            _db = dbContext;
+            _dateTimeProvider = dateTimeProvider;
         }
 
-        public IEnumerable<Person> GetAll()
+        public async Task<Person> GetByName(string name)
         {
-            return _people;
-        }
+            var entity = _db.PersonSet
+                .Where(x => x.Name.ToLower() == name.ToLower())
+                .ToList()
+                .FirstOrDefault();
 
-        public Person CreateNewPerson(Person person)
-        {
-            var personAlreadyExists = GetByName(person.Name) != null;
-
-            if(personAlreadyExists)
+            if (entity == null)
             {
                 return null;
             }
 
-            _people.Add(person);
-            return person;
+            return new Person
+            {
+                Name = entity.Name,
+                Age = entity.Age
+            };
         }
 
-        public Person UpdatePerson(Person person)
+        public async Task<IEnumerable<Person>> GetAll()
         {
-            var personAlreadyExists = GetByName(person.Name) != null;
-            
-            if(!personAlreadyExists)
+            return _db.PersonSet.Select(x => new Person
+            {
+                Name = x.Name,
+                Age = x.Age
+            }).ToList();
+        }
+
+        public async Task<Person> CreateNewPerson(Person person)
+        {
+            var personAlreadyExists = await GetByName(person.Name) != null;
+
+            if (personAlreadyExists)
             {
                 return null;
             }
 
-
-            for(int x = 0; x < _people.Count; x ++)
+            var newPerson = new PersonEntity
             {
-                var element = _people[x];
-                if(element.Name == person.Name)
-                {
-                    _people[x] = person;
-                }
+                Name = person.Name,
+                Age = person.Age,
+                CreatedDateTime = _dateTimeProvider.Now(),
+                ModifiedDateTime = _dateTimeProvider.Now()
+            };
+            _db.PersonSet.Add(newPerson);
+            await _db.SaveChangesAsync();
+            //_people.Add(person);
+            return person;
+        }
+
+        public async Task<Person> UpdatePerson(Person person)
+        {
+            var personAlreadyExists = await GetByName(person.Name) != null;
+
+            if (!personAlreadyExists)
+            {
+                return null;
             }
+
+            var entity = _db.PersonSet.FirstOrDefault(x => x.Name.ToLower() == person.Name.ToLower());
+
+            entity.Name = person.Name;
+            entity.Age = person.Age;
+
+            _db.PersonSet.Update(entity);
+            await _db.SaveChangesAsync();
+            // for(int x = 0; x < _people.Count; x ++)
+            // {
+            //     var element = _people[x];
+            //     if(element.Name == person.Name)
+            //     {
+            //         _people[x] = person;
+            //     }
+            // }
 
 
             return person;
         }
 
-        public Person DeleteByName(string name)
+        public async Task<Person> DeleteByName(string name)
         {
-            var personExists = GetByName(name) != null;
-            
-            if(!personExists)
+            var personExists = await GetByName(name) != null;
+
+            if (!personExists)
             {
                 return null;
             }
 
-            var person = _people
-            .FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            var entity = _db.PersonSet.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            _db.PersonSet.Remove(entity);
+            await _db.SaveChangesAsync();
 
-            //remove person from people list
-            _people.Remove(person);
+            // var person = _people
+            // .FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
 
-            return person;
+            // //remove person from people list
+            // _people.Remove(person);
+
+            return new Person
+            {
+                Name = entity.Name,
+                Age = entity.Age
+            };
         }
     }
 }

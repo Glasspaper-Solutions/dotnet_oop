@@ -8,12 +8,12 @@ using AspNetCore.Http.Extensions;
 
 namespace BasicWebApi.Test.TestServer
 {
-    public class DeleteTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class DeleteTests 
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public DeleteTests(WebApplicationFactory<Startup> factory)
+        public DeleteTests()
         {
-            _factory = factory;
+            _factory = new WebApplicationFactory<Startup>();
         }
 
         [Fact]

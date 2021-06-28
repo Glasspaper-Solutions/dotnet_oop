@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace BasicWebApi.Test.TestServer
 {
-    public class GetTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class GetTests
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public GetTests(WebApplicationFactory<Startup> factory)
+        public GetTests()
         {
-            _factory = factory;
+            _factory = new WebApplicationFactory<Startup>();
         }
 
         [Fact]
