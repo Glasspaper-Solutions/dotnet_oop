@@ -34,6 +34,7 @@ namespace BasicWebApi
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseSpa(config => config.UseProxyToSpaDevelopmentServer("http://localhost:8080/"));
         }
     }
 }
