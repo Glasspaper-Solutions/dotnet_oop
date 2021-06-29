@@ -68,5 +68,24 @@ namespace BasicWebApi.Test.TestServer
             // assert
             httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+        
+        public async Task Post_Twice_ShouldReturn_BadRequest()
+        {
+            // arange
+            var client = _factory.CreateClient();
+            var body = new Person
+            {
+                Name = "Gunnar",
+                Age = 35
+            };
+
+            // act
+            var httpResponse = await client.PostAsJsonAsync("api/person",body);
+            var httpResponse2 = await client.PostAsJsonAsync("api/person",body);
+
+            // assert
+            httpResponse2.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
     }
 }

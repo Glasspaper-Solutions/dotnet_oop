@@ -29,20 +29,13 @@ namespace BasicWebApi
                 return null;
             }
 
-            return new Person
-            {
-                Name = entity.Name,
-                Age = entity.Age
-            };
+            var domainModel = entity.ToDomain();
+            return domainModel;
         }
 
         public async Task<IEnumerable<Person>> GetAll()
         {
-            return _db.PersonSet.Select(x => new Person
-            {
-                Name = x.Name,
-                Age = x.Age
-            }).ToList();
+            return _db.PersonSet.Select(x => x.ToDomain()).ToList();
         }
 
         public async Task<Person> CreateNewPerson(Person person)
@@ -54,13 +47,10 @@ namespace BasicWebApi
                 return null;
             }
 
-            var newPerson = new PersonEntity
-            {
-                Name = person.Name,
-                Age = person.Age,
-                CreatedDateTime = _dateTimeProvider.Now(),
-                ModifiedDateTime = _dateTimeProvider.Now()
-            };
+            var newPerson = person.ToEntity();
+            newPerson.CreatedDateTime = _dateTimeProvider.Now();
+            newPerson.ModifiedDateTime = _dateTimeProvider.Now();
+            
             _db.PersonSet.Add(newPerson);
             await _db.SaveChangesAsync();
             //_people.Add(person);
@@ -80,6 +70,7 @@ namespace BasicWebApi
 
             entity.Name = person.Name;
             entity.Age = person.Age;
+            entity.ModifiedDateTime = _dateTimeProvider.Now();
 
             _db.PersonSet.Update(entity);
             await _db.SaveChangesAsync();
@@ -114,12 +105,8 @@ namespace BasicWebApi
 
             // //remove person from people list
             // _people.Remove(person);
-
-            return new Person
-            {
-                Name = entity.Name,
-                Age = entity.Age
-            };
+            var domainModel = entity.ToDomain();
+            return domainModel;
         }
     }
 }

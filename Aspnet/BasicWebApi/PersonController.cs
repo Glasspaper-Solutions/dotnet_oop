@@ -26,7 +26,7 @@ namespace BasicWebApi
                 return NotFound($"Person with name {name} was not found");
             }
 
-            return Ok(person);
+            return Ok(person);//ternary
         }
 
         [HttpGet]
@@ -58,7 +58,7 @@ namespace BasicWebApi
                 return BadRequest("Person can not be created, already exists in database");
             }
 
-            return Ok(createdPerson);
+            return Ok(createdPerson);//ternary
         }
 
         [HttpPut]
@@ -83,7 +83,7 @@ namespace BasicWebApi
                 return NotFound("Person can not be updated, because it does not exist in the database");
             }
 
-            return Ok(updatedPerson);
+            return Ok(updatedPerson);//ternary
         }
 
         [HttpDelete("{name}")]
@@ -98,7 +98,7 @@ namespace BasicWebApi
                 return NotFound("Person can not be deleted, because it does not exist in the database");
             }
 
-            return Ok("Deleted");
+            return Ok("Deleted"); //ternary
         }
     }
 }
