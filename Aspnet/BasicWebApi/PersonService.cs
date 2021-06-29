@@ -17,19 +17,14 @@ namespace BasicWebApi
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Person> GetByName(string name)
+        public async Task<Person?> GetByName(string name)
         {
             var entity = _db.PersonSet
                 .Where(x => x.Name.ToLower() == name.ToLower())
                 .ToList()
                 .FirstOrDefault();
 
-            if (entity == null)
-            {
-                return null;
-            }
-
-            var domainModel = entity.ToDomain();
+            var domainModel = entity?.ToDomain();
             return domainModel;
         }
 
@@ -38,7 +33,7 @@ namespace BasicWebApi
             return _db.PersonSet.Select(x => x.ToDomain()).ToList();
         }
 
-        public async Task<Person> CreateNewPerson(Person person)
+        public async Task<Person?> CreateNewPerson(Person person)
         {
             var personAlreadyExists = await GetByName(person.Name) != null;
 
@@ -57,7 +52,7 @@ namespace BasicWebApi
             return person;
         }
 
-        public async Task<Person> UpdatePerson(Person person)
+        public async Task<Person?> UpdatePerson(Person person)
         {
             var personAlreadyExists = await GetByName(person.Name) != null;
 
@@ -87,7 +82,7 @@ namespace BasicWebApi
             return person;
         }
 
-        public async Task<Person> DeleteByName(string name)
+        public async Task<Person?> DeleteByName(string name)
         {
             var personExists = await GetByName(name) != null;
 
