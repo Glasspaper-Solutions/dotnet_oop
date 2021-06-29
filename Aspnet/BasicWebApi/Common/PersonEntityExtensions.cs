@@ -6,11 +6,7 @@ namespace BasicWebApi.Common
     {
         public static Person ToDomain(this PersonEntity entity)
         {
-            return new Person
-            {
-                Name = entity.Name,
-                Age = entity.Age
-            };
+            return new Person(entity.Name,entity.Age);
         }
     }
 }

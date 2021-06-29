@@ -1,6 +1,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
+using BasicWebApi.Common;
+using BasicWebApi.Contracts.V1;
 
 namespace BasicWebApi
 {
@@ -19,71 +22,77 @@ namespace BasicWebApi
         [HttpGet("{name}")]
         public async Task<IActionResult> ReadSingle(string name)
         {
-            var person = await _service.GetByName(name);
+            var domainModel = await _service.GetByName(name);
 
-            if (person == null)
+            if (domainModel == null)
             {
                 return NotFound($"Person with name {name} was not found");
             }
 
-            return Ok(person);//ternary
+            var viewModel = domainModel.ToViewModel();
+            return Ok(viewModel); //ternary
         }
 
         [HttpGet]
         public async Task<IActionResult> Read()
         {
-            var data = await _service.GetAll();
-            return Ok(data);
+            var domainModels = await _service.GetAll();
+            var viewModels = domainModels.Select(x => x.ToViewModel());
+            return Ok(viewModels);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Person payload)
+        public async Task<IActionResult> Create([FromBody] PersonCreateModel createModel)
         {
-            if (payload.Age == null || payload.Age == 0)
+            if (createModel.Age == null || createModel.Age == 0)
             {
                 return BadRequest("Cannot create person when property 'age' is null or 0..");
             }
 
-            if (string.IsNullOrEmpty(payload.Name))
+            if (string.IsNullOrEmpty(createModel.Name))
             {
                 return BadRequest("Cannot create person when property 'name' is null or empty");
             }
 
-            Console.WriteLine($"Saving {payload.Name} to the database..");
+            Console.WriteLine($"Saving {createModel.Name} to the database..");
 
-            var createdPerson = await _service.CreateNewPerson(payload);
+            var domainModel = createModel.ToDomain();
+            var createdPerson = await _service.CreateNewPerson(domainModel);
 
             if (createdPerson == null)
             {
                 return BadRequest("Person can not be created, already exists in database");
             }
 
-            return Ok(createdPerson);//ternary
+            var viewModel = createdPerson.ToViewModel();
+            return Ok(viewModel); //ternary
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Person payload)
+        public async Task<IActionResult> Update([FromBody] PersonUpdateModel updateModel)
         {
-            if (payload.Age == null || payload.Age == 0)
+            if (updateModel.Age == null || updateModel.Age == 0)
             {
                 return BadRequest("Cannot update person when property 'age' is null or 0..");
             }
 
-            if (string.IsNullOrEmpty(payload.Name))
+            if (string.IsNullOrEmpty(updateModel.Name))
             {
                 return BadRequest("Cannot update person when property 'name' is null or empty");
             }
 
-            Console.WriteLine($"Updating {payload.Name} in the database..");
+            Console.WriteLine($"Updating {updateModel.Name} in the database..");
 
-            var updatedPerson = await _service.UpdatePerson(payload);
+            var domainModel = updateModel.ToDomain();
+            var updatedPerson = await _service.UpdatePerson(domainModel);
 
             if (updatedPerson == null)
             {
                 return NotFound("Person can not be updated, because it does not exist in the database");
             }
 
-            return Ok(updatedPerson);//ternary
+            var viewModel = updatedPerson.ToViewModel();
+            return Ok(viewModel); //ternary
         }
 
         [HttpDelete("{name}")]
@@ -98,6 +107,7 @@ namespace BasicWebApi
                 return NotFound("Person can not be deleted, because it does not exist in the database");
             }
 
+            var viewModel = deletedPerson.ToViewModel();
             return Ok("Deleted"); //ternary
         }
     }

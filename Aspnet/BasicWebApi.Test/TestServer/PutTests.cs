@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using AspNetCore.Http.Extensions;
+using BasicWebApi.Contracts.V1;
 
 namespace BasicWebApi.Test.TestServer
 {
@@ -20,16 +21,21 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var createModel = new PersonCreateModel
             {
                 Name = "Marit",
                 Age = 22
             };
-            await client.PostAsJsonAsync("api/person",body);
+            var updateModel = new PersonUpdateModel
+            {
+                Name = "Marit",
+                Age = 122
+            };
+            await client.PostAsJsonAsync("api/person",createModel);
 
 
             // act
-            var httpResponse = await client.PutAsJsonAsync("api/person",body);
+            var httpResponse = await client.PutAsJsonAsync("api/person",updateModel);
 
             // assert
             httpResponse.IsSuccessStatusCode.Should().BeTrue();
@@ -40,7 +46,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonUpdateModel
             {
                 Name = "Arnt",
                 Age = 22
@@ -58,7 +64,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonUpdateModel
             {
                 Name = "Franz",
             };
@@ -75,7 +81,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonUpdateModel
             {
                 Age = 22,
             };
@@ -86,6 +92,5 @@ namespace BasicWebApi.Test.TestServer
             // assert
             httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
-
     }
 }

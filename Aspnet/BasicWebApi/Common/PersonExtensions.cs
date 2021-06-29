@@ -1,3 +1,4 @@
+using BasicWebApi.Contracts.V1;
 using BasicWebApi.Data;
 
 namespace BasicWebApi.Common
@@ -11,6 +12,11 @@ namespace BasicWebApi.Common
                 Name = domain.Name,
                 Age = domain.Age
             };
+        }
+
+        public static PersonViewModel ToViewModel(this Person domain)
+        {
+            return new PersonViewModel(domain.Name, domain.Age);
         }
     }
 }

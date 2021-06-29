@@ -5,6 +5,7 @@ using FluentAssertions;
 using BasicWebApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using AspNetCore.Http.Extensions;
+using BasicWebApi.Contracts.V1;
 
 namespace BasicWebApi.Test.TestServer
 {
@@ -21,7 +22,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonCreateModel
             {
                 Name = "per",
                 Age = 22

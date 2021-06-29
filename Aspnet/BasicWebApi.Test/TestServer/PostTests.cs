@@ -6,6 +6,7 @@ using BasicWebApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using AspNetCore.Http.Extensions;
 using System;
+using BasicWebApi.Contracts.V1;
 
 namespace BasicWebApi.Test.TestServer
 {
@@ -22,7 +23,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonCreateModel
             {
                 Name = "Kari",
                 Age = 22
@@ -40,7 +41,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonCreateModel
             {
                 Name = "Kent",
             };
@@ -57,7 +58,7 @@ namespace BasicWebApi.Test.TestServer
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonCreateModel
             {
                 Age = 22,
             };
@@ -69,11 +70,12 @@ namespace BasicWebApi.Test.TestServer
             httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
         
+        [Fact]
         public async Task Post_Twice_ShouldReturn_BadRequest()
         {
             // arange
             var client = _factory.CreateClient();
-            var body = new Person
+            var body = new PersonCreateModel
             {
                 Name = "Gunnar",
                 Age = 35
