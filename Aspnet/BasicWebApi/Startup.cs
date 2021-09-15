@@ -7,6 +7,7 @@ using BasicWebApi.Data;
 using BasicWebApi.Common;
 using BasicWebApi.Contracts.V1;
 using FluentValidation.AspNetCore;
+using Microsoft.Extensions.Hosting;
 
 namespace BasicWebApi
 {
@@ -27,14 +28,31 @@ namespace BasicWebApi
             services.AddDbContext<PersonDbContext>(opt => opt.UseInMemoryDatabase("PersonDb"));
             services.AddTransient<PersonService>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+           
+            services.AddSpaStaticFiles(c =>
+            {
+                c.RootPath = "../VueApp/dist";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSpaStaticFiles();
             app.UseRouting();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseSpa(config => config.UseProxyToSpaDevelopmentServer("http://localhost:8080/"));
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                
+            });
+            app.UseSpa(config =>
+            {
+                config.Options.SourcePath = "../VueApp";
+                if (env.IsDevelopment())
+                {
+                    config.UseProxyToSpaDevelopmentServer("http://localhost:8080/");   
+                }
+            });
         }
     }
 }
